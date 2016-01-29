@@ -1,31 +1,56 @@
 package jp.ac.meijo_u.id130441001.sampleproject;
 
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+        import android.support.v7.app.ActionBarActivity;
+        import android.os.Bundle;
+        import android.view.Menu;
+        import android.view.MenuItem;
+        import android.view.View;
+        import android.widget.*;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends ActionBarActivity implements CountDownTask.CountDownTaskCallback {
+    private EditText editInitialCount;
+    private Button buttonStart;
+    private Button buttonStop;
+    private TextView textCount;
+    private CountDownTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        editInitialCount = (EditText)findViewById(R.id.editInitialCount);
+        buttonStart = (Button)findViewById(R.id.buttonStart);
+        buttonStop = (Button)findViewById(R.id.buttonStop);
+        textCount = (TextView)findViewById(R.id.textCount);
+    }
+
+    public void handleButtonStart(View view) {
+        int count = Integer.parseInt(editInitialCount.getText().toString());
+        task = new CountDownTask(this);
+        task.execute(count);
+
+    }
+
+    public void handleButtonStop(View view) {
+        if (task != null)
+            task.cancel(true);
+    }
+
+    @Override
+    public void onPreExecute() {
+
+    }
+
+    @Override
+    public void onProgressUpdate(String... values) {
+        textCount.setText(values[0].toString());
+    }
+
+    @Override
+    public void onPostExecute(String result) {
+        textCount.setText(result);
     }
 
     @Override
